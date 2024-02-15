@@ -8,7 +8,11 @@ const Volumetria = () => {
   const [numInputs, setNumInputs] = useState('');
   const [InputValuesLeft, setInputValuesLeft] = useState([]);
   const [InputValuesRight, setInputValuesRight] = useState([]);
+  const [MassaMolecular, setMassaMolecular] = useState('');
+  const [MassaImpura, setMassaImpura] = useState('');
   const [volumetriaResultado, setVolumetriaResultado] = useState('');
+  const [Massa, setMassa] = useState('');
+  const [Pureza, setPureza] = useState('');
 
   const handleChangeMols = (e) => {
     setMols(e.target.value);
@@ -72,13 +76,35 @@ const Volumetria = () => {
       return resultRight;
   };
 
+  const handleChangeMassaMolecular = (e) => {
+    setMassaMolecular(e.target.value)
+  }
+
+  const handleChangeMassaImpura = (e) => {
+    setMassaImpura(e.target.value)
+  }
+
   // Faz o cálculo da volumetria
   const volumetriaNeutralizacao = () => {
     const resultLeft = multiplyValuesLeft();
     const resultRight = multiplyValuesRight();
     const vn = (mols * volumeGasto * resultRight) / (volumeSolução * resultLeft);
-    setVolumetriaResultado(vn.toFixed(4));
+    setVolumetriaResultado(vn);
     return vn;
+  };
+
+  const massa = () => {
+    const resultLeft = multiplyValuesLeft();
+    const resultRight = multiplyValuesRight();
+    const MVN = (mols * volumeGasto * resultRight) / (volumeSolução * resultLeft) * MassaMolecular * 1000
+    setMassa(MVN)
+  };
+
+  const pureza = () => {
+    const resultLeft = multiplyValuesLeft();
+    const resultRight = multiplyValuesRight();
+    const PVN = ((mols * volumeGasto * resultRight) / (volumeSolução * resultLeft) * MassaMolecular * 1000) * 100 / MassaImpura
+    setPureza(PVN)
   };
 
   return (
@@ -96,21 +122,47 @@ const Volumetria = () => {
       <input type="number" value={volumeSolução} onChange={handleChangeVolumeSolução}/>
       </div>
       <div>
-          <label>Número de Reações</label>
-            <input type="number" value={numInputs} onChange={handleChangeNumInputs} />
-          </div>
+        <label>Número de Reações</label>
+        <input type="number" value={numInputs} onChange={handleChangeNumInputs} />
+      </div>
 
-          {numInputs > 0 && (
-            <div>
-              {handleGenerateInputs()}
-            </div>
-          )}
+      {numInputs > 0 && (
+        <div>
+          {handleGenerateInputs()}
+        </div>
+      )}
 
-          <button onClick={volumetriaNeutralizacao}>Calcular</button>
+      <div>
+        <label>Massa Molecular</label>
+        <input type="number" value={MassaMolecular} onChange={handleChangeMassaMolecular}/>
+      </div>
+
+      <div>
+        <label> Massa Impura </label>
+        <input type="number" value={MassaImpura} onChange={handleChangeMassaImpura}/>
+      </div>
+
+          <button onClick={volumetriaNeutralizacao}>Mol/L</button>
 
           {volumetriaResultado !== null && (
             <div>
               Resultado final: {volumetriaResultado}
+            </div>
+          )}
+
+          <button onClick={massa}>mg/L</button>
+
+          {Massa !== null && (
+            <div>
+              Resultado final: {Massa}
+            </div>
+          )}
+
+          <button onClick={pureza}>Pureza</button>
+
+          {Pureza !== null && (
+            <div>
+              Resultado final: {Pureza}
             </div>
           )}
     </div>
